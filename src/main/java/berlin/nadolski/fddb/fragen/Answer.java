@@ -16,7 +16,7 @@
 package berlin.nadolski.fddb.fragen;
 
 /**
- *
+ * The model to represent Answers to a Question.
  * @author Maikel Nadolski <maikel@nadolski.berlin>
  */
 public class Answer {

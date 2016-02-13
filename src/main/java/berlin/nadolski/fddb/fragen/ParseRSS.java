@@ -22,19 +22,33 @@ import java.io.IOException;
  * @author Maikel Nadolski <maikel@nadolski.berlin>
  */
 public class ParseRSS {
-    
-    static final String RSS_URL = "http://fddb.info/db/i18n/communityrss/?lang=de";
 
-    /**
-     * @param args the command line arguments
-     * @throws java.io.IOException
-     */
-    public static void main(String[] args) throws IOException {
-        Parser parser = new Parser(RSS_URL);
-        parser.questions().stream().forEach((q) -> {
-            System.out.println("Title: " + q.title());
-            System.out.println("Created: " + q.pub_date() + "\n");
-        });
-    }
-    
+   static final String RSS_URL = "http://fddb.info/db/i18n/communityrss/?lang=de";
+
+   private static String rep(String x, int n) {
+      String str = new String();
+      for (int i = 0; i < n; i++) {
+         str += x;
+      }
+      return str;
+   }
+
+   /**
+    * @param args the command line arguments
+    *
+    * @throws java.io.IOException
+    */
+   public static void main(String[] args) throws IOException, Exception {
+      Parser parser = new Parser(RSS_URL);
+      parser.questions().stream().forEach((q) -> {
+         System.out.println("Title: " + q.title());
+         System.out.println("Created: " + q.pub_date());
+         System.out.println("Num Answers: " + q.answers().size());
+         System.out.println("Text:");
+         System.out.println(rep("=", 80));
+         System.out.println(q.text());
+         System.out.println(rep("=", 80));
+      });
+   }
+
 }
