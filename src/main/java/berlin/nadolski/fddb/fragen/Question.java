@@ -15,6 +15,8 @@
  */
 package berlin.nadolski.fddb.fragen;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Date;
 import java.util.List;
 
@@ -24,7 +26,13 @@ import java.util.List;
  * @author Maikel Nadolski <maikel@nadolski.berlin>
  */
 public class Question {
-    public Question(String title, String href, String author, List<Answer> answers, String text, Date pub_date) {
+    public Question(
+            @JsonProperty("title") String title,
+            @JsonProperty("href") String href,
+            @JsonProperty("author") String author,
+            @JsonProperty("answers") List<Answer> answers,
+            @JsonProperty("text") String text,
+            @JsonProperty("date") Date pub_date) {
         m_title = title;
         m_href = href;
         m_author = author;
@@ -34,31 +42,26 @@ public class Question {
     }
     
     private final String m_title;
+    @JsonGetter(value = "title")
     public String title() { return m_title; }
     
     private final String m_href;
+    @JsonGetter(value = "href")
     public String href() { return m_href; }
     
     private final String m_author;
+    @JsonGetter(value = "author")
     public String author() { return m_author; }
     
-    private final List<Answer> m_answers;
-    public List<Answer> answers() { return m_answers; }
-    
     private final Date m_pub_date;
+    @JsonGetter(value = "date")
     public Date pub_date() { return m_pub_date; }
     
     private final String m_text;
+    @JsonGetter(value = "text")
     public String text() { return m_text; }
     
-    @Override
-    public String toString() {
-        String json = "{";
-        json += "title:\"" + m_title + "\"";
-        json += ",author:\"" + m_author + "\"";
-        json += ",href:\"" + m_href + "\"";
-        json += ",answers:" + m_answers;
-        json += "}";
-        return json;
-    }
+    private final List<Answer> m_answers;
+    @JsonGetter(value = "answers")
+    public List<Answer> answers() { return m_answers; }
 }

@@ -15,18 +15,24 @@
  */
 package berlin.nadolski.fddb.fragen;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * The model to represent Answers to a Question.
  * @author Maikel Nadolski <maikel@nadolski.berlin>
  */
 public class Answer {
-    public Answer(String author, String text) {
+    public Answer(@JsonProperty("author") String author,
+                   @JsonProperty("text") String text) {
         m_author = author;
         m_text   = text;
     } 
     
     final String m_author;
+    @JsonGetter(value = "author")
     public String author() { return m_author; }
     final String m_text;
+    @JsonGetter(value = "text")
     public String text() { return m_text; }
 }
