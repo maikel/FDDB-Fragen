@@ -21,20 +21,21 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author Maikel Nadolski <maikel@nadolski.berlin>
  */
 public class ParseRSS {
-
+   private final static Logger logger = LogManager.getLogger(ParseRSS.class);
    static final String RSS_URL = "http://fddb.info/db/i18n/communityrss/?lang=de";
    static final String DEFAULT_JSON_FILE = "questions.json";
 
@@ -92,7 +93,7 @@ public class ParseRSS {
          old_questions = mapper.readValue(json_file, new TypeReference<List<Question>>() {
          });
       } catch (NoSuchFileException exception) {
-         System.out.println("No old questions found! Assume first time run.");
+         logger.warn("No old questions found! Assume first time run.");
       }
       // Read the online rss feed with our parser class and get new list of questions
       Parser parser = new Parser(RSS_URL);
@@ -101,20 +102,21 @@ public class ParseRSS {
       // write new questions into json file
       mapper.enable(SerializationFeature.INDENT_OUTPUT);
       try (BufferedWriter json_file = Files.newBufferedWriter(json_path)) {
-         System.out.println("Writing new questions to data file!");
+         logger.debug("Writing new questions to data file!");
          mapper.writeValue(json_file, new_questions);
       }
       if (old_questions == null) {
-         System.out.println("New questions or answers: ");
+         logger.info(new_questions.size() + " new questions.");
          mapper.writeValue(System.out, new_questions);
       } else {
          // show differences in questions and answers
          List<Question> diff_questions = diff_questions(old_questions, new_questions);
          if (diff_questions.size() > 0) {
-            System.out.println("New questions or answers: ");
+            logger.info("New questions or answers.");
             mapper.writeValue(System.out, diff_questions);
          } else {
-            System.out.println("No new questions or answers.");
+            logger.info("No new questions or answers.");
+            mapper.writeValue(System.out, diff_questions);
          }
       }
    }

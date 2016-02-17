@@ -16,13 +16,13 @@ limitations under the License.
 -->
 <Configuration status="WARN">
   <Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
+    <File name="main file" filename="ParseRSS.log">
       <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}: %msg%n"/>
-    </Console>
+    </File>
   </Appenders>
   <Loggers>
     <Root level="info">
-      <AppenderRef ref="Console"/>
+      <AppenderRef ref="main file"/>
     </Root>
   </Loggers>
 </Configuration>
