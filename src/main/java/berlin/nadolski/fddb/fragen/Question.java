@@ -64,4 +64,13 @@ public class Question {
     private final List<Answer> m_answers;
     @JsonGetter(value = "answers")
     public List<Answer> answers() { return m_answers; }
+    
+    @Override
+    public boolean equals(Object other) {
+       boolean result = false;
+       if (other != null && other instanceof Question) {
+          result = 0 == this.href().compareTo(((Question)other).href());
+       }
+       return result;
+    }
 }

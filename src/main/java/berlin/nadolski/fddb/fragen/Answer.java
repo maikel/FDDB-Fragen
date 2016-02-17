@@ -35,4 +35,14 @@ public class Answer {
     final String m_text;
     @JsonGetter(value = "text")
     public String text() { return m_text; }
+    
+    @Override
+    public boolean equals(Object other) {
+       boolean result = false;
+       if (other != null && other instanceof Answer) {
+          result = 0 == this.text().compareTo(((Answer)other).text());
+          result = result && 0 == this.author().compareTo(((Answer)other).author());
+       }
+       return result;
+    }
 }
