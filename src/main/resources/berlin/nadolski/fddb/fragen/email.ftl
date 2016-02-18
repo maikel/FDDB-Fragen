@@ -12,9 +12,10 @@
       <h2><a href="#title">${question.title}</a></h2>
       <author><a href="#author">${question.author}</a></author>
       <date>${question.date?date}, ${question.date?time}</date>
+      <p class="text">${question.text}</p>
       <#list question.answers as answer>
-         <p><a href="#author">${answer.author}</a></p>
-         <p>${answer.text}</p>
+         <author><a href="#author">${answer.author}</a></author>
+         <p class="text">${answer.text}</p>
       </#list>
       </article>
    </#list>

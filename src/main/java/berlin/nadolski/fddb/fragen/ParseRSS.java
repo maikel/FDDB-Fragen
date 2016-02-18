@@ -47,8 +47,11 @@ public class ParseRSS {
 
    /**
     * Send Email about updates of new questions and answers.
+    * @param questions
+    * @throws java.io.IOException
+    * @throws freemarker.template.TemplateException
     */
-   public static void send_email(List<Question> questions) throws IOException, TemplateException {
+   public static void print_html(List<Question> questions) throws IOException, TemplateException {
       Configuration cfg = new Configuration();
       cfg.setDefaultEncoding("UTF-8");
       cfg.setClassForTemplateLoading(ParseRSS.class, ".");
@@ -133,7 +136,6 @@ public class ParseRSS {
          logger.debug("Writing new questions to data file!");
          mapper.writeValue(json_file, new_questions);
       }
-      send_email(new_questions);
       if (old_questions == null) {
          logger.info(new_questions.size() + " new questions.");
          mapper.writeValue(System.out, new_questions);
@@ -145,10 +147,9 @@ public class ParseRSS {
             int num_new_answers = 0;
             num_new_answers = diff_questions.stream().map((q) -> q.getAnswers().size()).reduce(num_new_answers, Integer::sum);
             logger.info("Found " + num_new_answers + " new answers!");
-            mapper.writeValue(System.out, diff_questions);
+            print_html(diff_questions);
          } else {
             logger.info("No new questions or answers.");
-            mapper.writeValue(System.out, diff_questions);
          }
       }
    }
