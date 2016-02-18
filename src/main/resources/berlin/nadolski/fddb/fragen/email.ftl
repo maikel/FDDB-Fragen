@@ -4,11 +4,11 @@
 <title>Neue FDDB Nachrichten</title>
 <meta charset="UTF-8">
 <style>
-body {
+body, h3 {
    font-size: 11pt;
 }
 h2 {
-   font-size: 14pt;
+   font-size: 13pt;
 }
 .blue, a {
    color: #24a;
@@ -36,12 +36,14 @@ p {
    <#list questions as question>
       <article>
       <h2>Titel: "<a href=\"${question.href}\">${question.title}</a>"</h2>
-      <author>Autor: <span class="blue">${question.author}</span></author>
-      <date>Veröffentlicht am ${question.date?date} um ${question.date?time}</date>
+	  <author>Autor: <a href=\"http://fddb.info/db/de/leute/${question.author}/index.html\">${question.author}</a></author>
+      <date>Veröffentlicht am ${question.date?date} um ${question.date?time} Uhr</date>
       <p class=\"text\">Frage: ${question.text}</p>
+	  <h2>Antworten</h2>
       <#list question.answers as answer>
          <article>
          <author>${answer.author}</author>
+		 <date>am 18.02.2016 um 0:00 Uhr</date>
          <p class=\"text\">${answer.text}</p>
          </article>
       </#list>
