@@ -31,17 +31,17 @@ public class Answer {
     
     final String m_author;
     @JsonGetter(value = "author")
-    public String author() { return m_author; }
+    public String getAuthor() { return m_author; }
     final String m_text;
     @JsonGetter(value = "text")
-    public String text() { return m_text; }
+    public String getText() { return m_text; }
     
     @Override
     public boolean equals(Object other) {
        boolean result = false;
        if (other != null && other instanceof Answer) {
-          result = 0 == this.text().compareTo(((Answer)other).text());
-          result = result && 0 == this.author().compareTo(((Answer)other).author());
+          result = 0 == this.getText().compareTo(((Answer)other).getText());
+          result = result && 0 == this.getAuthor().compareTo(((Answer)other).getAuthor());
        }
        return result;
     }

@@ -43,33 +43,33 @@ public class Question {
     
     private final String m_title;
     @JsonGetter(value = "title")
-    public String title() { return m_title; }
+    public String getTitle() { return m_title; }
     
     private final String m_href;
     @JsonGetter(value = "href")
-    public String href() { return m_href; }
+    public String getHref() { return m_href; }
     
     private final String m_author;
     @JsonGetter(value = "author")
-    public String author() { return m_author; }
+    public String getAuthor() { return m_author; }
     
     private final Date m_pub_date;
     @JsonGetter(value = "date")
-    public Date pub_date() { return m_pub_date; }
+    public Date getDate() { return m_pub_date; }
     
     private final String m_text;
     @JsonGetter(value = "text")
-    public String text() { return m_text; }
+    public String getText() { return m_text; }
     
     private final List<Answer> m_answers;
     @JsonGetter(value = "answers")
-    public List<Answer> answers() { return m_answers; }
+    public List<Answer> getAnswers() { return m_answers; }
     
     @Override
     public boolean equals(Object other) {
        boolean result = false;
        if (other != null && other instanceof Question) {
-          result = 0 == this.href().compareTo(((Question)other).href());
+          result = 0 == this.getHref().compareTo(((Question)other).getHref());
        }
        return result;
     }

@@ -87,8 +87,8 @@ public class Parser {
          logger.debug("Trying if given argument `source` is an URL.");
          URL url = new URL(source);
          logger.debug("Success. Fetching HTML code from the internet...");
-         dom = Jsoup.connect(source).get();
-//            dom = Jsoup.parse(url.openStream(), "ISO-8859-1", source);
+         dom = Jsoup.parse(url.openStream(), "ISO-8859-1", source, org.jsoup.parser.Parser.xmlParser());
+         dom.outputSettings().charset("UTF-8");
       } catch (MalformedURLException e) {
          logger.debug("Failed. Try to open a file named after argument `source`...");
          File file = new File(source);

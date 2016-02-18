@@ -22,13 +22,19 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -39,6 +45,20 @@ public class ParseRSS {
    static final String RSS_URL = "http://fddb.info/db/i18n/communityrss/?lang=de";
    static final String DEFAULT_JSON_FILE = "questions.json";
 
+   /**
+    * Send Email about updates of new questions and answers.
+    */
+   public static void send_email(List<Question> questions) throws IOException, TemplateException {
+      Configuration cfg = new Configuration();
+      cfg.setDefaultEncoding("UTF-8");
+      cfg.setClassForTemplateLoading(ParseRSS.class, ".");
+      Template temp = cfg.getTemplate("email.ftl");
+      Map<String, Object> root = new HashMap<>();
+      root.put("questions", questions);
+      Writer out = new OutputStreamWriter(System.out);
+      temp.process(root, out);
+   }
+   
    /**
     * Check for each new question if it is different or new to an older version.
     *
@@ -60,16 +80,16 @@ public class ParseRSS {
             // to the diff if neccessary
          } else {
             Question old_q = old_questions.get(iq);
-            if (old_q.answers().size() < new_q.answers().size()) {
+            if (old_q.getAnswers().size() < new_q.getAnswers().size()) {
                LinkedList<Answer> diff_answers = new LinkedList<>();
-               for (Answer new_a : new_q.answers()) {
-                  if (!old_q.answers().contains(new_a)) {
+               for (Answer new_a : new_q.getAnswers()) {
+                  if (!old_q.getAnswers().contains(new_a)) {
                      diff_answers.add(new_a);
                   }
                }
                diff_questions.add(
-                       new Question(old_q.title(), old_q.href(), old_q.author(),
-                               diff_answers, old_q.text(), old_q.pub_date()));
+                       new Question(old_q.getTitle(), old_q.getHref(), old_q.getAuthor(),
+                               diff_answers, old_q.getText(), old_q.getDate()));
             }
          }
       }
@@ -82,17 +102,25 @@ public class ParseRSS {
     * @throws java.io.IOException
     */
    public static void main(String[] args) throws IOException, Exception {
+      // if an argument is given, take it as path for the json file
+      String json_filename;
+      if (args.length > 0) {
+         json_filename = args[0];
+      } else {
+         json_filename = DEFAULT_JSON_FILE;
+      }
+      
       List<Question> old_questions = null;
       List<Question> new_questions;
       ObjectMapper mapper = new ObjectMapper();
       // open JSON file
-      Path json_path = Paths.get(DEFAULT_JSON_FILE);
+      Path json_path = Paths.get(json_filename);
       // if file exists open it and load old questions data.
       // TODO: check if path points to a directory and abort the program
       try (BufferedReader json_file = Files.newBufferedReader(json_path)) {
          old_questions = mapper.readValue(json_file, new TypeReference<List<Question>>() {
          });
-      } catch (NoSuchFileException exception) {
+      } catch (Exception exception) {
          logger.warn("No old questions found! Assume first time run.");
       }
       // Read the online rss feed with our parser class and get new list of questions
@@ -105,6 +133,7 @@ public class ParseRSS {
          logger.debug("Writing new questions to data file!");
          mapper.writeValue(json_file, new_questions);
       }
+      send_email(new_questions);
       if (old_questions == null) {
          logger.info(new_questions.size() + " new questions.");
          mapper.writeValue(System.out, new_questions);
@@ -112,7 +141,10 @@ public class ParseRSS {
          // show differences in questions and answers
          List<Question> diff_questions = diff_questions(old_questions, new_questions);
          if (diff_questions.size() > 0) {
-            logger.info("New questions or answers.");
+            logger.info("Changes is in " + diff_questions.size() + " questions.");
+            int num_new_answers = 0;
+            num_new_answers = diff_questions.stream().map((q) -> q.getAnswers().size()).reduce(num_new_answers, Integer::sum);
+            logger.info("Found " + num_new_answers + " new answers!");
             mapper.writeValue(System.out, diff_questions);
          } else {
             logger.info("No new questions or answers.");
