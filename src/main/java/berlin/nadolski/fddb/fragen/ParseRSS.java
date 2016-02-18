@@ -54,7 +54,7 @@ public class ParseRSS {
    public static void print_html(List<Question> questions) throws IOException, TemplateException {
       Configuration cfg = new Configuration();
       cfg.setDefaultEncoding("UTF-8");
-      cfg.setClassForTemplateLoading(ParseRSS.class, ".");
+      cfg.setClassForTemplateLoading(ParseRSS.class, "/berlin/nadolski/fddb/fragen");
       Template temp = cfg.getTemplate("email.ftl");
       Map<String, Object> root = new HashMap<>();
       root.put("questions", questions);
@@ -138,7 +138,7 @@ public class ParseRSS {
       }
       if (old_questions == null) {
          logger.info(new_questions.size() + " new questions.");
-         mapper.writeValue(System.out, new_questions);
+		 print_html(new_questions);
       } else {
          // show differences in questions and answers
          List<Question> diff_questions = diff_questions(old_questions, new_questions);
